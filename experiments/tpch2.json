@@ -1,0 +1,61 @@
+{
+  "id": "TPCHC_Test_Experiment",
+  "description": "Just a TPCHC Test Experiment",
+  "gym_version": 1,
+  "timesteps": 20000,
+  "random_seed": 60,
+  "parallel_environments": 1,
+  "pickle_cost_estimation_caches": false,
+  "action_manager": "MultiColumnIndexActionManager",
+  "observation_manager": "SingleColumnIndexObservationManager",
+  "reward_calculator": "RelativeDifferenceRelativeToStorageReward",
+  "max_steps_per_episode": 200,
+  "validation_frequency": 1000,
+  "filter_utilized_columns": false,
+  "max_index_width": 3,
+  "reenable_indexes": true,
+  "result_path": "experiment_results",
+  "workload_embedder": {
+    "type": "PlanEmbedderLSIBOW",
+    "representation_size": 30
+  },
+  "rl_algorithm": {
+    "algorithm": "PPO2",
+    "stable_baselines_version": 2,
+    "gamma": 0.5,
+    "policy": "MlpPolicy",
+    "model_architecture": {
+      "net_arch": [
+        {
+          "vf": [256,256],
+          "pi": [256,256]
+        }
+      ]
+    },
+    "args": {
+      "n_steps": 64
+    }
+  },
+  "workload": {
+    "benchmark": "TPCHC",
+    "scale_factor": 1,
+    "size": 20,
+    "varying_frequencies": false, 
+    "training_instances": 5000,
+    "validation_testing": {
+      "number_of_workloads": 5,
+      "unknown_query_probabilities": [0.0]
+    },
+    "similar_workloads": false,
+    "excluded_query_classes": [],
+    "unknown_queries": 0
+  },
+  "comparison_algorithms": ["db2advis"],
+  "budgets": {
+    "training": false,
+    "validation_and_testing": [50, 100, 150, 250, 350, 500, 650, 800, 1000]
+  },
+  "column_filters": {
+    "TableNumRowsFilter": 10000
+  }
+}

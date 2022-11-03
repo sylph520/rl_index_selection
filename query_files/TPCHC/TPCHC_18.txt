@@ -1,0 +1,1 @@
+select lineitem.l_linestatus from lineitem, supplier where lineitem.l_suppkey = supplier.s_suppkey and lineitem.l_commitdate = date'1998-06-16' and lineitem.l_extendedprice < 40722.24;

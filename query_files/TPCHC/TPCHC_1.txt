@@ -1,0 +1,1 @@
+select nation.n_name from region, nation where nation.n_regionkey = region.r_regionkey and nation.n_nationkey < 2 and region.r_comment = 'ly final courts cajole furiously final excuse';

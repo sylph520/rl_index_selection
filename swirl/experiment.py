@@ -50,6 +50,11 @@ class Experiment(object):
         self._create_experiment_folder()
 
     def prepare(self):
+        """
+        prepare schema, workload generator, (embedder);
+        extract indexable columns, index sizes;
+        assign budget
+        """
         self.schema = Schema(
             self.config["workload"]["benchmark"],
             self.config["workload"]["scale_factor"],
@@ -234,7 +239,7 @@ class Experiment(object):
             self.EXPERIMENT_RESULT_PATH
         ), f"Folder for experiment results should exist at: ./{self.EXPERIMENT_RESULT_PATH}"
 
-        self.experiment_folder_path = f"{self.EXPERIMENT_RESULT_PATH}/ID_{self.id}"
+        self.experiment_folder_path = f"{self.EXPERIMENT_RESULT_PATH}/ID_{self.id}_{self.start_time}"
         assert os.path.isdir(self.experiment_folder_path) is False, (
             f"Experiment folder already exists at: ./{self.experiment_folder_path} - "
             "terminating here because we don't want to overwrite anything."

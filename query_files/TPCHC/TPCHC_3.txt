@@ -1,0 +1,1 @@
+select nation.n_regionkey from region, nation where nation.n_regionkey = region.r_regionkey and nation.n_comment = 'c dependencies. furiously express notornis sleep slyly regular accounts. ideas sleep. depos' and nation.n_name = 'EGYPT                    ';

@@ -1,0 +1,1 @@
+select lineitem.l_commitdate from partsupp, lineitem where lineitem.l_partkey = partsupp.ps_partkey and lineitem.l_suppkey > 4878 and lineitem.l_tax = 0.05;

@@ -1,0 +1,1 @@
+select lineitem.l_quantity from partsupp, lineitem where lineitem.l_suppkey = partsupp.ps_suppkey and lineitem.l_linenumber = 3 and lineitem.l_shipmode = 'MAIL      ';

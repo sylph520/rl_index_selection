@@ -1,0 +1,1 @@
+select lineitem.l_shipmode from partsupp, lineitem where lineitem.l_suppkey = partsupp.ps_suppkey and lineitem.l_quantity > 32.00 and lineitem.l_partkey < 132057;

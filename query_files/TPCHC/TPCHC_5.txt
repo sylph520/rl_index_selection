@@ -1,0 +1,1 @@
+select customer.c_acctbal from customer, orders where customer.c_custkey = orders.o_custkey and orders.o_clerk = 'Clerk#000000107' and customer.c_address = 'cR5QLdFoi6e2K96SOIuBSTagcn9orFt7,xWx';

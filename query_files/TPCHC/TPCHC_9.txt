@@ -1,0 +1,1 @@
+select orders.o_custkey from orders, lineitem where lineitem.l_orderkey = orders.o_orderkey and lineitem.l_extendedprice = 19092.59 and lineitem.l_suppkey < 7808;

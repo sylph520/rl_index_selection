@@ -25,6 +25,7 @@ class WorkloadGenerator(object):
     ):
         assert config["benchmark"] in [
             "TPCH",
+            "TPCHC",
             "TPCDS",
             "JOB",
         ], f"Benchmark '{config['benchmark']}' is currently not supported."
@@ -157,6 +158,8 @@ class WorkloadGenerator(object):
             return 99
         elif self.benchmark == "JOB":
             return 113
+        elif self.benchmark == "TPCHC":
+            return 20
         else:
             raise ValueError("Unsupported Benchmark type provided, only TPCH, TPCDS, and JOB supported.")
 

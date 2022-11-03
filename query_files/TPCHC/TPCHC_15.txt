@@ -1,0 +1,1 @@
+select lineitem.l_linestatus from part, lineitem where lineitem.l_partkey = part.p_partkey and lineitem.l_comment = 'ial, regular asymptotes wake quickly regula' and lineitem.l_shipmode = 'TRUCK     ';

@@ -1,0 +1,1 @@
+select partsupp.ps_suppkey from partsupp, lineitem where lineitem.l_partkey = partsupp.ps_partkey and lineitem.l_orderkey > 868036 and lineitem.l_extendedprice < 42570.15;

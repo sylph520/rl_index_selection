@@ -1,0 +1,1 @@
+select supplier.s_name from lineitem, supplier where lineitem.l_suppkey = supplier.s_suppkey and supplier.s_phone = '26-265-429-8153' and lineitem.l_shipmode = 'MAIL      ';

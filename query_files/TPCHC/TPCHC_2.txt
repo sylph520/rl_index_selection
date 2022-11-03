@@ -1,0 +1,1 @@
+select partsupp.ps_partkey from partsupp, supplier where supplier.s_suppkey = partsupp.ps_suppkey and supplier.s_nationkey = 20 and supplier.s_suppkey = 2682;

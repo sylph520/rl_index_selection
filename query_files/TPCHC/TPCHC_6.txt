@@ -1,0 +1,1 @@
+select customer.c_acctbal from customer, orders where customer.c_custkey = orders.o_custkey and customer.c_address = 'eg5fr71AHlvZ4II4mNQoO' and orders.o_comment = 'egular requests integrate quickly ';

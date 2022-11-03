@@ -1,0 +1,1 @@
+select lineitem.l_linenumber from partsupp, lineitem where lineitem.l_partkey = partsupp.ps_partkey and lineitem.l_orderkey < 1296422 and partsupp.ps_partkey = 35538;

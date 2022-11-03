@@ -1,0 +1,1 @@
+select partsupp.ps_availqty from part, partsupp where part.p_partkey = partsupp.ps_partkey and partsupp.ps_comment = 'en somas are around the furiously final deposits. quickly ironic instructions' and partsupp.ps_supplycost > 307.11;

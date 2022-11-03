@@ -1,0 +1,1 @@
+select partsupp.ps_suppkey from partsupp, supplier where supplier.s_suppkey = partsupp.ps_suppkey and partsupp.ps_partkey > 36832 and partsupp.ps_supplycost > 640.38;

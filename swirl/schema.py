@@ -20,10 +20,11 @@ class Schema(object):
             for column in table.columns:
                 self.columns.append(column)
 
-        for filter_name in filters.keys():
-            filter_class = getattr(importlib.import_module("swirl.schema"), filter_name)
-            filter_instance = filter_class(filters[filter_name], self.database_name)
-            self.columns = filter_instance.apply_filter(self.columns)
+        if benchmark_name != "TPCHC":
+            for filter_name in filters.keys():
+                filter_class = getattr(importlib.import_module("swirl.schema"), filter_name)
+                filter_instance = filter_class(filters[filter_name], self.database_name)
+                self.columns = filter_instance.apply_filter(self.columns)
 
 
 class TableNumRowsFilter(object):

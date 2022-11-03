@@ -1,0 +1,1 @@
+select part.p_retailprice from part, partsupp where part.p_partkey = partsupp.ps_partkey and part.p_name = 'sky burlywood lawn almond tan' and part.p_brand = 'Brand#25  ';

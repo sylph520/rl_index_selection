@@ -65,6 +65,8 @@ if __name__ == "__main__":
     logging.warning(f"Creating model with NN architecture: {experiment.config['rl_algorithm']['model_architecture']}")
 
     experiment.set_model(model)
+    # compare performance of alternative algorihtms,
+    # i.e., (extend), (db2advis)
     experiment.compare()
 
     callback_test_env = VecNormalize(
