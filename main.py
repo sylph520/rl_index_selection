@@ -37,7 +37,7 @@ if __name__ == "__main__":
     experiment.prepare()
 
     ParallelEnv = SubprocVecEnv if experiment.config["parallel_environments"] > 1 else DummyVecEnv
-
+    # experiment.config["parallel_environments"] = 1
     training_env = ParallelEnv(
         [experiment.make_env(env_id) for env_id in range(experiment.config["parallel_environments"])]
     )
@@ -50,13 +50,15 @@ if __name__ == "__main__":
     with open(f"{experiment.experiment_folder_path}/experiment_object.pickle", "wb") as handle:
         pickle.dump(experiment, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+
+    tbln = experiment.time_tag
     model = algorithm_class(
         policy=experiment.config["rl_algorithm"]["policy"],
         env=training_env,
         verbose=2,
         seed=experiment.config["random_seed"],
         gamma=experiment.config["rl_algorithm"]["gamma"],
-        tensorboard_log="tensor_log",
+        tensorboard_log=f"tensor_log/{tbln}",
         policy_kwargs=copy.copy(
             experiment.config["rl_algorithm"]["model_architecture"]
         ),  # This is necessary because SB modifies the passed dict.
@@ -129,7 +131,7 @@ if __name__ == "__main__":
     model.learn(
         total_timesteps=experiment.config["timesteps"],
         callback=callbacks,
-        tb_log_name=experiment.id,
+        tb_log_name=tbln,
     )
     experiment.finish_learning(
         training_env,

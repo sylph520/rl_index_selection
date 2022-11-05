@@ -302,7 +302,7 @@ class PlanEmbedderLSIBOW(PlanEmbedder):
         self.lsi_bow = gensim.models.LsiModel(
             self.bow_corpus, id2word=self.dictionary, num_topics=self.representation_size
         )
-
+        # self.compuate_cv()
         assert (
             len(self.lsi_bow.get_topics()) == self.representation_size
         ), f"Topic-representation_size mismatch: {len(self.lsi_bow.get_topics())} vs {self.representation_size}"
@@ -319,6 +319,14 @@ class PlanEmbedderLSIBOW(PlanEmbedder):
         assert len(vector) == self.representation_size
 
         return vector
+
+    def compuate_cv(self, cohr_v='u_mass', print_flag=True):
+        from gensim.models.coherencemodel import CoherenceModel
+        cm = CoherenceModel(model=self.lsi_bow, corpus=self.bow_corpus, coherence=cohr_v)
+        coherenceV = cm.get_coherence()
+        if print_flag:
+            print(f"coherence value: {coherenceV}")
+
 
 
 class PlanEmbedderLSIBOWWithoutIndexes(PlanEmbedderLSIBOW):

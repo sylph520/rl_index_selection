@@ -229,6 +229,7 @@ class Experiment(object):
 
     def _init_times(self):
         self.start_time = datetime.datetime.now()
+        self.time_tag = str(self.start_time).split()[0].replace('-','')+'_'+str(self.start_time).split()[1].split('.')[0].replace(':','')
 
         self.end_time = None
         self.training_start_time = None
@@ -239,7 +240,9 @@ class Experiment(object):
             self.EXPERIMENT_RESULT_PATH
         ), f"Folder for experiment results should exist at: ./{self.EXPERIMENT_RESULT_PATH}"
 
-        self.experiment_folder_path = f"{self.EXPERIMENT_RESULT_PATH}/ID_{self.id}_{self.start_time}"
+
+        tbln = f"{self.id}_{self.config['workload_embedder']['type']}_{self.config['workload_embedder']['representation_size']}_{self.time_tag}"
+        self.experiment_folder_path = f"{self.EXPERIMENT_RESULT_PATH}/{tbln}"
         assert os.path.isdir(self.experiment_folder_path) is False, (
             f"Experiment folder already exists at: ./{self.experiment_folder_path} - "
             "terminating here because we don't want to overwrite anything."
