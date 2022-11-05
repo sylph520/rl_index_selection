@@ -15,9 +15,9 @@ if __name__ == "__main__":
 
     assert len(sys.argv) == 2, "Experiment configuration file must be provided: main.py path_fo_file.json"
     CONFIGURATION_FILE = sys.argv[1]
-
+    # setup experiment object
     experiment = Experiment(CONFIGURATION_FILE)
-
+    # stable_baseline 2 or 3
     if experiment.config["rl_algorithm"]["stable_baselines_version"] == 2:
         from stable_baselines.common.callbacks import EvalCallbackWithTBRunningAverage
         from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize
