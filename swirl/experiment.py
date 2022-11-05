@@ -106,6 +106,9 @@ class Experiment(object):
                 self.multi_validation_wl.extend(self.rnd.sample(workloads, min(7, len(workloads))))
 
     def _assign_budgets_to_workloads(self):
+        """
+        random budgets assignment
+        """
         for workload_list in self.workload_generator.wl_testing:
             for workload in workload_list:
                 workload.budget = self.rnd.choice(self.config["budgets"]["validation_and_testing"])
