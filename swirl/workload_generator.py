@@ -392,7 +392,7 @@ class WorkloadGenerator(object):
         workload = self._workloads_from_tuples([(available_query_classes, query_class_frequencies)])[0]
 
         indexable_columns = workload.indexable_columns()
-        if only_utilized_indexes:
+        if only_utilized_indexes: #db2's approach
             indexable_columns = self._only_utilized_indexes(indexable_columns)
         selected_columns = []
 

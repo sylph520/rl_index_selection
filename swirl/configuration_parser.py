@@ -4,6 +4,9 @@ import logging
 
 class ConfigurationParser(object):
     def __init__(self, configuration_file):
+        """
+        init configuration parser, parse and check the configurations
+        """
         self.REQUIRED_CONFIGURATION_OPTIONS_FIRST_LEVEL = [
             "id",
             "description",

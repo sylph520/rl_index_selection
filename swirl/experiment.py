@@ -88,6 +88,7 @@ class Experiment(object):
             self.globally_indexable_columns_flat, self.schema.database_name
         )
 
+        # create the workload embedder according to the configuration
         if "workload_embedder" in self.config:
             workload_embedder_class = getattr(
                 importlib.import_module("swirl.workload_embedder"), self.config["workload_embedder"]["type"]
@@ -498,6 +499,9 @@ class Experiment(object):
             f.write("\n\n")
 
     def compare(self):
+        """
+        run the comparative algorithms, e.g., extend, db2advis
+        """
         if len(self.config["comparison_algorithms"]) < 1:
             return
 

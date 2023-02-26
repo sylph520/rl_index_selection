@@ -11,7 +11,14 @@ from .boo import BagOfOperators
 
 
 class WorkloadEmbedder(object):
+    """
+    the base class of workload embedder inheriting object class
+    """
     def __init__(self, query_texts, representation_size, database_connector, columns=None, retrieve_plans=False):
+        """
+        1) init the stoptokens list
+        2) collect plans without indexes or with various indexes
+        """
         self.STOPTOKENS = [
             "as",
             "and",
@@ -46,7 +53,7 @@ class WorkloadEmbedder(object):
 
         if retrieve_plans:
             cost_evaluation = CostEvaluation(self.database_connector)
-            # [without indexes], [with indexes]
+            # plans [without indexes], [with indexes]
             self.plans = ([], [])
             for query_idx, query_texts_per_query_class in enumerate(query_texts):
                 query_text = query_texts_per_query_class[0]
@@ -86,6 +93,7 @@ class WorkloadEmbedder(object):
 
 
 class SQLWorkloadEmbedder(WorkloadEmbedder):
+    """doc2vec"""
     def __init__(self, query_texts, representation_size, database_connector, columns):
         WorkloadEmbedder.__init__(self, query_texts, representation_size, database_connector)
 

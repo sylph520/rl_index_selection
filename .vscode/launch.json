@@ -1,0 +1,74 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+
+		{
+			"name": "Python: tpch10  r30",
+			"type": "python",
+			"request": "launch",
+			"module": "swirl",
+			"justMyCode": false,
+			"args": ["experiments/tpch_r30.json"] 
+		},
+		{
+			"name": "Python: tpch10  r10",
+			"type": "python",
+			"request": "launch",
+			"module": "swirl",
+			"justMyCode": false,
+			"args": ["experiments/tpch_r10.json"] 
+		},
+		{
+			"name": "Python: tpch1 custom",
+			"type": "python",
+			"request": "launch",
+			"module": "swirl",
+			"justMyCode": false,
+			"args": ["experiments/tpch2.json"] 
+		},		
+		{
+			"name": "Python: tpch1 plan embdding obs",
+			"type": "python",
+			"request": "launch",
+			"module": "swirl",
+			"justMyCode": false,
+			"args": ["experiments/tpch1_planembedding_obs.json"] 
+		},
+		{
+			"name": "Python: tpch1 ori",
+			"type": "python",
+			"request": "launch",
+			"module": "swirl",
+			"justMyCode": false,
+			"args": ["experiments/tpch1.json"] 
+		},
+		{
+			"name": "Python: tpch10  ori",
+			"type": "python",
+			"request": "launch",
+			"module": "swirl",
+			"justMyCode": false,
+			"args": ["experiments/tpch.json"] 
+		},
+		{
+			"name": "Python: tpchds ori",
+			"type": "python",
+			"request": "launch",
+			"module": "swirl",
+			"justMyCode": false,
+			"args": ["experiments/tpcds.json"] 
+		},
+		{
+			"name": "Python: Current File",
+			"type": "python",
+			"request": "launch",
+			"program": "${file}",
+			"console": "integratedTerminal",
+			"justMyCode": false
+		},
+
+	]
+}

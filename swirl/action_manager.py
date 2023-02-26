@@ -18,7 +18,7 @@ class ActionManager(object):
         self.valid_actions = None
         self._remaining_valid_actions = None
         self.number_of_actions = None
-        self.current_action_status = None
+        self.current_action_status = None # size = the number of columns
 
         self.test_variable = None
 
