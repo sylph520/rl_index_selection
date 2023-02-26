@@ -51,6 +51,11 @@ if __name__ == "__main__":
     with open(f"{experiment.experiment_folder_path}/experiment_object.pickle", "wb") as handle:
         pickle.dump(experiment, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+    tbln = f"{experiment.id}_{experiment.config['workload_embedder']['type']}_{experiment.time_tag}"
+    import os;
+    tb_log_dir = f"tensor_log/{tbln}"
+    os.mkdir(tb_log_dir)
+
     model = algorithm_class(
         policy=experiment.config["rl_algorithm"]["policy"],
         env=training_env,
