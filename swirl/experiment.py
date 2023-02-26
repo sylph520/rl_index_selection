@@ -234,6 +234,9 @@ class Experiment(object):
     def _init_times(self):
         self.start_time = datetime.datetime.now()
         self.time_tag = str(self.start_time).split()[0].replace('-','')+'_'+str(self.start_time).split()[1].split('.')[0].replace(':','')
+        day, ctime = str(self.start_time).split(' ')
+        self.day_str = day.replace('-','')
+        self.time_str = '_'.join(ctime.split('.')[0].split(':')[0:2])
 
         self.end_time = None
         self.training_start_time = None
@@ -245,14 +248,15 @@ class Experiment(object):
         ), f"Folder for experiment results should exist at: ./{self.EXPERIMENT_RESULT_PATH}"
 
 
-        tbln = f"{self.id}_{self.config['workload_embedder']['type']}_{self.config['workload_embedder']['representation_size']}_{self.time_tag}"
-        self.experiment_folder_path = f"{self.EXPERIMENT_RESULT_PATH}/{tbln}"
+        timed_folder = f"{self.time_str}-{self.id}_{self.config['workload_embedder']['type']}_{self.config['workload_embedder']['representation_size']}_{self.time_tag}"
+        self.experiment_folder_path = f"{self.EXPERIMENT_RESULT_PATH}/{self.day_str}/{timed_folder}"
+        
         assert os.path.isdir(self.experiment_folder_path) is False, (
             f"Experiment folder already exists at: ./{self.experiment_folder_path} - "
             "terminating here because we don't want to overwrite anything."
         )
 
-        os.mkdir(self.experiment_folder_path)
+        os.makedirs(self.experiment_folder_path, exist_ok = True)
 
     def _write_report(self):
         with open(f"{self.experiment_folder_path}/report_ID_{self.id}.txt", "w") as f:
