@@ -248,7 +248,9 @@ class Experiment(object):
         ), f"Folder for experiment results should exist at: ./{self.EXPERIMENT_RESULT_PATH}"
 
 
-        timed_folder = f"{self.time_str}-{self.id}_{self.config['workload_embedder']['type']}_{self.config['workload_embedder']['representation_size']}_{self.time_tag}"
+        timed_folder = f"{self.time_str}-{self.id}_obsm{self.config['observation_manager']}_" + \
+                f"{self.config['workload_embedder']['type']}_" + \
+                f"{self.config['workload_embedder']['representation_size']}"
         self.experiment_folder_path = f"{self.EXPERIMENT_RESULT_PATH}/{self.day_str}/{timed_folder}"
         
         assert os.path.isdir(self.experiment_folder_path) is False, (

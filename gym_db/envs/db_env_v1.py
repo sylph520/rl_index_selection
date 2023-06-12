@@ -127,6 +127,8 @@ class DBEnvV1(gym.Env):
         self.episode_performances.append(episode_performance)
 
     def _init_modifiable_state(self):
+        """
+        """
         self.current_indexes = set()
         self.steps_taken = 0
         self.current_storage_consumption = 0
@@ -161,11 +163,15 @@ class DBEnvV1(gym.Env):
 
         return initial_observation
 
-    def _update_return_env_state(self, init, new_index=None, old_index_size=None):
+    def _update_return_env_state(self, init, new_index=None, old_index_size=None) -> dict:
         total_costs, plans_per_query, costs_per_query = self.cost_evaluation.calculate_cost_and_plans(
             self.current_workload, self.current_indexes, store_size=True
         )
-
+        """
+        update the cost&storage vars, e.g., self.(initial_costs, previous_cost,
+         previous_storage_consumption, current_storage_consumption)
+         and return the dict environment_state
+        """
         if not init:
             self.previous_cost = self.current_costs
             self.previous_storage_consumption = self.current_storage_consumption

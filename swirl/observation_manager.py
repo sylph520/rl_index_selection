@@ -76,6 +76,11 @@ class EmbeddingObservationManager(ObservationManager):
         raise NotImplementedError
 
     def get_observation(self, environment_state):
+        """
+        no info for cost per query
+        cur_idx_conf + wl_embedding + cost_per_query + q_freq + 
+        ep_budget + cur_storage + initial_cost + current_cost
+        """
         if self.UPDATE_EMBEDDING_PER_OBSERVATION:
             workload_embedding = np.array(self.workload_embedder.get_embeddings(environment_state["plans_per_query"]))
         else:
@@ -172,6 +177,11 @@ class SingleColumnIndexPlanEmbeddingObservationManagerWithCost(EmbeddingObservat
 
     # This overwrite EmbeddingObservationManager.get_observation() because further features are added
     def get_observation(self, environment_state):
+        """
+        with info for cost per query
+        cur_idx_conf + wl_embedding + cost_per_query + q_freq + 
+        ep_budget + cur_storage + initial_cost + current_cost
+        """
         workload_embedding = np.array(self.workload_embedder.get_embeddings(environment_state["plans_per_query"]))
         observation = np.array(environment_state["action_status"])
         observation = np.append(observation, workload_embedding)
@@ -208,6 +218,9 @@ class SingleColumnIndexObservationManager(ObservationManager):
         self.frequencies = np.array(self._get_frequencies_from_workload_wide(episode_workload))
 
     def get_observation(self, environment_state):
+        """
+        cur_idx_conf + q_freq + ep_budget + cur_storage + initial_cost + cur_cost
+        """
         observation = np.array(environment_state["action_status"])
         observation = np.append(observation, self.frequencies)
         observation = np.append(observation, self.episode_budget)
@@ -245,6 +258,9 @@ class UnknownQueriesObservationManager(ObservationManager):
         super()._init_episode(state_fix_for_episode)
 
     def get_observation(self, environment_state):
+        """
+        cur_idx_conf + ep_budget + cur_storage + init_cost + cur_cost
+        """
         observation = np.array(environment_state["action_status"])
         observation = np.append(observation, self.episode_budget)
         observation = np.append(observation, environment_state["current_storage_consumption"])
@@ -294,6 +310,9 @@ class DRLindaObservationManager(ObservationManager):
         self._update_episode_fix_data(state_fix_for_episode)
 
     def get_observation(self, environment_state):
+        """
+        cur_idx_conf + wl_matrix + access_vec
+        """
         # self._update_episode_fix_data(self.state_fix_for_episode)
 
         assert self._workload_matrix is not None

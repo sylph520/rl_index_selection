@@ -114,8 +114,11 @@ class SQLWorkloadEmbedder(WorkloadEmbedder):
 
     def get_embeddings(self, workload):
         embeddings = []
-
-        for query in workload.queries:
+        if isinstance(workload[0][0], str):
+            query_texts = workload
+        else:
+            query_texts = workload.queries
+        for query in query_texts:
             tokens = gensim.utils.simple_preprocess(query.text, max_len=50)
             tokens = [token for token in tokens if token not in self.STOPTOKENS]
             vector = self.model.infer_vector(tokens)

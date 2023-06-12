@@ -15,6 +15,11 @@ ALLOWED_ACTION_SB2 = 1
 
 class ActionManager(object):
     def __init__(self, sb_version, max_index_width):
+        """
+        with discrete action space, action status value 0->not taken yet
+        1 for single column index present, 0.5 for two-column index present
+        dummy init of valid_actions,_remaining_valid_actions, number_of_actions, current_action_status, ...
+        """
         self.valid_actions = None
         self._remaining_valid_actions = None
         self.number_of_actions = None
@@ -54,6 +59,7 @@ class ActionManager(object):
         assert self.indexable_column_combinations_flat[last_action] not in self.current_combinations
 
         actions_index_width = len(self.indexable_column_combinations_flat[last_action])
+        # print(f">>>>>>>>>>>>> last action: {last_action}")
         if actions_index_width == 1:
             self.current_action_status[last_action] += 1
         else:
@@ -169,6 +175,12 @@ class MultiColumnIndexActionManager(ActionManager):
     def __init__(
         self, indexable_column_combinations, action_storage_consumptions, sb_version, max_index_width, reenable_indexes
     ):
+        """
+        init number_of_actions&number_columns from indexable combinations
+        init action_storage consumptions
+        init candidate_dependent_map d: index -> the idx of dependent singular attr, 
+            e.g., index (a,.., b, c): d[(a,...,b)] = idx(c)
+        """
         ActionManager.__init__(self, sb_version, max_index_width=max_index_width)
 
         self.indexable_column_combinations = indexable_column_combinations
@@ -178,6 +190,7 @@ class MultiColumnIndexActionManager(ActionManager):
         ]
         self.number_of_actions = len(self.indexable_column_combinations_flat)
         self.number_of_columns = len(self.indexable_column_combinations[0])
+        # the storage consumption of action-corresponed indexes
         self.action_storage_consumptions = action_storage_consumptions
 
         self.indexable_columns = list(
@@ -198,6 +211,7 @@ class MultiColumnIndexActionManager(ActionManager):
 
         self.candidate_dependent_map = {}
         for indexable_column_combination in self.indexable_column_combinations_flat:
+            # filter indexes with width larger than max_index_width
             if len(indexable_column_combination) > max_index_width - 1:
                 continue
             self.candidate_dependent_map[indexable_column_combination] = []
@@ -212,10 +226,12 @@ class MultiColumnIndexActionManager(ActionManager):
         last_combination = self.indexable_column_combinations_flat[last_action]
         last_combination_length = len(last_combination)
 
+        # add the index into valid actions if 1) the last column is not indexable. ?
+        # AND 2) the index is not alraedy created
         if last_combination_length != self.MAX_INDEX_WIDTH:
             for column_combination_idx in self.candidate_dependent_map[last_combination]:
                 indexable_column_combination = self.indexable_column_combinations_flat[column_combination_idx]
-                possible_extended_column = indexable_column_combination[-1]
+                possible_extended_column = indexable_column_combination[-1] # the last column
 
                 if possible_extended_column not in self.wl_indexable_columns:
                     continue
