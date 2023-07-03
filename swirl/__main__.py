@@ -71,7 +71,7 @@ if __name__ == "__main__":
     logging.warning(f"Creating model with NN architecture: {experiment.config['rl_algorithm']['model_architecture']}")
 
     experiment.set_model(model)
-    experiment.compare()
+    # experiment.compare()
 
     callback_test_env = VecNormalize(
         DummyVecEnv([experiment.make_env(0, EnvironmentType.TESTING)]),
