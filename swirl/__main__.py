@@ -55,7 +55,7 @@ if __name__ == "__main__":
     import os;
     tb_log_dir = f"tensor_log/{tbln}"
     os.mkdir(tb_log_dir)
-
+    print(f'rnd: {experiment.config["random_seed"]}')
     model = algorithm_class(
         policy=experiment.config["rl_algorithm"]["policy"],
         env=training_env,
@@ -67,6 +67,7 @@ if __name__ == "__main__":
             experiment.config["rl_algorithm"]["model_architecture"]
         ),  # This is necessary because SB modifies the passed dict.
         **experiment.config["rl_algorithm"]["args"],
+        n_cpu_tf_sess=1,
     )
     logging.warning(f"Creating model with NN architecture: {experiment.config['rl_algorithm']['model_architecture']}")
 

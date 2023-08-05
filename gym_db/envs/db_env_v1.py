@@ -68,6 +68,7 @@ class DBEnvV1(gym.Env):
         ), f"{Index(self.globally_indexable_columns[action])} already in self.current_indexes"
 
     def step(self, action):
+        # print(f"step action: {action}")
         self._step_asserts(action)
 
         self.steps_taken += 1
