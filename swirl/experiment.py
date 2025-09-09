@@ -47,6 +47,8 @@ class Experiment(object):
         self.evaluated_workloads_strs = []
 
         self.EXPERIMENT_RESULT_PATH = self.config["result_path"]
+        if 'multirun' not in self.config['workload']:
+            self.config['workload']['multirun'] = -1
         self._create_experiment_folder()
 
     def prepare(self):
@@ -69,7 +71,9 @@ class Experiment(object):
             experiment_id=self.id,
             filter_utilized_columns=self.config["filter_utilized_columns"],
         )
-        self._assign_budgets_to_workloads()
+        fix_flag = False if 'fixed' not in self.config['budgets'] \
+            else self.config['budgets']['fixed']
+        self._assign_budgets_to_workloads(fixed=fix_flag)  # random assignment by sampling from the set
         self._pickle_workloads()
 
         self.globally_indexable_columns = self.workload_generator.globally_indexable_columns
@@ -106,17 +110,32 @@ class Experiment(object):
             for workloads in self.workload_generator.wl_validation:
                 self.multi_validation_wl.extend(self.rnd.sample(workloads, min(7, len(workloads))))
 
-    def _assign_budgets_to_workloads(self):
+    def _assign_budgets_to_workloads(self, fixed=False):
         """
         random budgets assignment
         """
-        for workload_list in self.workload_generator.wl_testing:
-            for workload in workload_list:
-                workload.budget = self.rnd.choice(self.config["budgets"]["validation_and_testing"])
+        if not fixed:
+            for workload_list in self.workload_generator.wl_testing:
+                for workload in workload_list:
+                    workload.budget = self.rnd.choice(self.config["budgets"]["validation_and_testing"])
 
-        for workload_list in self.workload_generator.wl_validation:
-            for workload in workload_list:
-                workload.budget = self.rnd.choice(self.config["budgets"]["validation_and_testing"])
+            for workload_list in self.workload_generator.wl_validation:
+                for workload in workload_list:
+                    workload.budget = self.rnd.choice(self.config["budgets"]["validation_and_testing"])
+        else:
+            assert self.config['workload']['validation_testing']['number_of_workloads']==len(self.config["budgets"]["validation_and_testing"])
+
+            for workload_list in self.workload_generator.wl_testing:
+                for i in range(len(workload_list)):
+                    workload = workload_list[i]
+                    workload.budget = self.config['budgets']["validation_and_testing"][i]
+
+            for workload_list in self.workload_generator.wl_validation:
+                for i in range(len(workload_list)):
+                    workload = workload_list[i]
+                    workload.budget = self.config['budgets']["validation_and_testing"][i]
+
+            print("debug line")
 
     def _pickle_workloads(self):
         with open(f"{self.experiment_folder_path}/testing_workloads.pickle", "wb") as handle:
@@ -126,6 +145,9 @@ class Experiment(object):
             pickle.dump(self.workload_generator.wl_validation, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def finish(self):
+        """
+        steps after finishing the training,
+        """
         self.end_time = datetime.datetime.now()
 
         self.model.training = False
@@ -134,11 +156,17 @@ class Experiment(object):
 
         self.test_fm = self.test_model(self.model)[0]
         self.vali_fm = self.validate_model(self.model)[0]
+        self.test_fm2 = self.test_model(self.model, wk_list=self.workload_generator.wk_list)[0]
+        self.vali_fm2 = self.validate_model(self.model, wk_list=self.workload_generator.wk_list)[0]
 
+        # load the model for testing and validation
         self.moving_average_model = self.model_type.load(f"{self.experiment_folder_path}/moving_average_model.zip")
         self.moving_average_model.training = False
         self.test_ma = self.test_model(self.moving_average_model)[0]
         self.vali_ma = self.validate_model(self.moving_average_model)[0]
+
+        self.test_ma2 = self.test_model(self.moving_average_model, wk_list=self.workload_generator.wk_list)[0]
+        self.vali_ma2 = self.validate_model(self.moving_average_model, wk_list=self.workload_generator.wk_list)[0]
         if len(self.multi_validation_wl) > 0:
             self.moving_average_model_mv = self.model_type.load(
                 f"{self.experiment_folder_path}/moving_average_model_mv.zip"
@@ -147,10 +175,16 @@ class Experiment(object):
             self.test_ma_mv = self.test_model(self.moving_average_model_mv)[0]
             self.vali_ma_mv = self.validate_model(self.moving_average_model_mv)[0]
 
+            self.test_ma_mv2 = self.test_model(self.moving_average_model_mv, wk_list=self.workload_generator.wk_list)[0]
+            self.vali_ma_mv2 = self.validate_model(self.moving_average_model_mv, wk_list=self.workload_generator.wk_list)[0]
+
         self.moving_average_model_3 = self.model_type.load(f"{self.experiment_folder_path}/moving_average_model_3.zip")
         self.moving_average_model_3.training = False
         self.test_ma_3 = self.test_model(self.moving_average_model_3)[0]
         self.vali_ma_3 = self.validate_model(self.moving_average_model_3)[0]
+
+        self.test_ma_32 = self.test_model(self.moving_average_model_3, wk_list=self.workload_generator.wk_list)[0]
+        self.vali_ma_32 = self.validate_model(self.moving_average_model_3, wk_list=self.workload_generator.wk_list)[0]
         if len(self.multi_validation_wl) > 0:
             self.moving_average_model_3_mv = self.model_type.load(
                 f"{self.experiment_folder_path}/moving_average_model_3_mv.zip"
@@ -158,11 +192,15 @@ class Experiment(object):
             self.moving_average_model_3_mv.training = False
             self.test_ma_3_mv = self.test_model(self.moving_average_model_3_mv)[0]
             self.vali_ma_3_mv = self.validate_model(self.moving_average_model_3_mv)[0]
+            self.test_ma_3_mv2 = self.test_model(self.moving_average_model_3_mv, wk_list=self.workload_generator.wk_list)[0]
+            self.vali_ma_3_mv2 = self.validate_model(self.moving_average_model_3_mv, wk_list=self.workload_generator.wk_list)[0]
 
         self.best_mean_reward_model = self.model_type.load(f"{self.experiment_folder_path}/best_mean_reward_model.zip")
         self.best_mean_reward_model.training = False
         self.test_bm = self.test_model(self.best_mean_reward_model)[0]
         self.vali_bm = self.validate_model(self.best_mean_reward_model)[0]
+        self.test_bm2 = self.test_model(self.best_mean_reward_model, wk_list=self.workload_generator.wk_list)[0]
+        self.vali_bm2 = self.validate_model(self.best_mean_reward_model, wk_list=self.workload_generator.wk_list)[0]
         if len(self.multi_validation_wl) > 0:
             self.best_mean_reward_model_mv = self.model_type.load(
                 f"{self.experiment_folder_path}/best_mean_reward_model_mv.zip"
@@ -170,6 +208,8 @@ class Experiment(object):
             self.best_mean_reward_model_mv.training = False
             self.test_bm_mv = self.test_model(self.best_mean_reward_model_mv)[0]
             self.vali_bm_mv = self.validate_model(self.best_mean_reward_model_mv)[0]
+            self.test_bm_mv2 = self.test_model(self.best_mean_reward_model_mv, wk_list=self.workload_generator.wk_list)[0]
+            self.vali_bm_mv2 = self.validate_model(self.best_mean_reward_model_mv, wk_list=self.workload_generator.wk_list)[0]
 
         self._write_report()
 
@@ -252,7 +292,7 @@ class Experiment(object):
                 f"{self.config['workload_embedder']['type']}_" + \
                 f"{self.config['workload_embedder']['representation_size']}"
         self.experiment_folder_path = f"{self.EXPERIMENT_RESULT_PATH}/{self.day_str}/{timed_folder}"
-        
+
         assert os.path.isdir(self.experiment_folder_path) is False, (
             f"Experiment folder already exists at: ./{self.experiment_folder_path} - "
             "terminating here because we don't want to overwrite anything."
@@ -292,12 +332,22 @@ class Experiment(object):
                 test_fm_perfs, self.performance_test_final_model, self.test_fm_details = self.test_fm[idx]
                 vali_fm_perfs, self.performance_vali_final_model, self.vali_fm_details = self.vali_fm[idx]
 
+                test_fm_perfs2, self.performance_test_final_model2, self.test_fm_details2 = self.test_fm2[idx]
+                vali_fm_perfs2, self.performance_vali_final_model2, self.vali_fm_details2 = self.vali_fm3[idx]
+
                 _, self.performance_test_moving_average_model, self.test_ma_details = self.test_ma[idx]
                 _, self.performance_vali_moving_average_model, self.vali_ma_details = self.vali_ma[idx]
                 _, self.performance_test_moving_average_model_3, self.test_ma_details_3 = self.test_ma_3[idx]
                 _, self.performance_vali_moving_average_model_3, self.vali_ma_details_3 = self.vali_ma_3[idx]
                 _, self.performance_test_best_mean_reward_model, self.test_bm_details = self.test_bm[idx]
                 _, self.performance_vali_best_mean_reward_model, self.vali_bm_details = self.vali_bm[idx]
+
+                _, self.performance_test_moving_average_model2, self.test_ma_details2 = self.test_ma2[idx]
+                _, self.performance_vali_moving_average_model2, self.vali_ma_details2 = self.vali_ma2[idx]
+                _, self.performance_test_moving_average_model_32, self.test_ma_details_32 = self.test_ma_32[idx]
+                _, self.performance_vali_moving_average_model_32, self.vali_ma_details_32 = self.vali_ma_32[idx]
+                _, self.performance_test_best_mean_reward_model2, self.test_bm_details2 = self.test_bm2[idx]
+                _, self.performance_vali_best_mean_reward_model2, self.vali_bm_details2 = self.vali_bm2[idx]
 
                 if len(self.multi_validation_wl) > 0:
                     _, self.performance_test_moving_average_model_mv, self.test_ma_details_mv = self.test_ma_mv[idx]
@@ -313,11 +363,15 @@ class Experiment(object):
 
                 self.test_fm_wl_budgets = self._get_wl_budgets_from_model_perfs(test_fm_perfs)
                 self.vali_fm_wl_budgets = self._get_wl_budgets_from_model_perfs(vali_fm_perfs)
+                self.test_fm_wl_budgets2 = self._get_wl_budgets_from_model_perfs(test_fm_perfs2)
+                self.vali_fm_wl_budgets2 = self._get_wl_budgets_from_model_perfs(vali_fm_perfs2)
 
                 f.write(
                     (
                         "        Final model:               "
-                        f"{self.performance_test_final_model:.2f} ({self.test_fm_details})\n"
+                        f"{self.performance_test_final_model:.2f} ({self.test_fm_details})\n"+
+                        "        Final model2:               "
+                        f"{self.performance_test_final_model2:.2f} ({self.test_fm_details2})\n"
                     )
                 )
                 f.write(
@@ -486,6 +540,9 @@ class Experiment(object):
             )
             training_time = self.training_end_time - self.training_start_time
             f.write(
+                f"training time:   ({training_time}%)\n"
+            )
+            f.write(
                 f"Cost eval time (% of total):   {self.costing_time} ({self.costing_time / training_time * 100:.2f}%)\n"
             )
             # f.write(f"Cost eval time:                {self.costing_time:.2f}\n")
@@ -582,9 +639,11 @@ class Experiment(object):
                     self.evaluated_workloads_strs.append(f"{model_performance['evaluated_workload']}\n")
 
     # todo: code duplication with validate_model
-    def test_model(self, model):
+    def test_model(self, model, wk_list=None):
         model_performances = []
-        for test_wl in self.workload_generator.wl_testing:
+        if not wk_list:
+            wk_list = self.workload_generator.wl_testing
+        for test_wl in wk_list:
             test_env = self.DummyVecEnv([self.make_env(0, EnvironmentType.TESTING, test_wl)])
             test_env = self.VecNormalize(
                 test_env, norm_obs=True, norm_reward=False, gamma=self.config["rl_algorithm"]["gamma"], training=False
@@ -598,9 +657,11 @@ class Experiment(object):
 
         return model_performances, "test"
 
-    def validate_model(self, model):
+    def validate_model(self, model, wk_list=None):
         model_performances = []
-        for validation_wl in self.workload_generator.wl_validation:
+        if not wk_list:
+            wk_list = self.workload_generator.wl_validation
+        for validation_wl in wk_list:
             validation_env = self.DummyVecEnv([self.make_env(0, EnvironmentType.VALIDATION, validation_wl)])
             validation_env = self.VecNormalize(
                 validation_env,
@@ -626,7 +687,7 @@ class Experiment(object):
 
         episode_performances = evaluation_env.get_attr("episode_performances")[0]
         perfs = []
-        for perf in episode_performances:
+        for perf in episode_performances: # achieved_cost is after_cost/initial_cost
             perfs.append(round(perf["achieved_cost"], 2))
 
         mean_performance = np.mean(perfs)

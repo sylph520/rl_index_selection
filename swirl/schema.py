@@ -23,7 +23,7 @@ class Schema(object):
             for column in table.columns:
                 self.columns.append(column)
 
-        if benchmark_name != "TPCHC":
+        if benchmark_name not in ["TPCHC", "TPCHC2"]:
             for filter_name in filters.keys():
                 filter_class = getattr(importlib.import_module("swirl.schema"), filter_name)
                 filter_instance = filter_class(filters[filter_name], self.database_name)

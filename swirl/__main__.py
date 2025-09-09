@@ -4,7 +4,6 @@ import logging
 import pickle
 import sys
 
-import gym_db  # noqa: F401
 from gym_db.common import EnvironmentType
 
 from .experiment import Experiment

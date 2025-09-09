@@ -1,6 +1,7 @@
 import copy
 import logging
 import random
+from typing import List, Tuple
 
 import numpy as np
 
@@ -20,12 +21,15 @@ QUERY_PATH = "query_files"
 
 
 class WorkloadGenerator(object):
+    """
+    generate workloads according to the conf
+    """
     def __init__(
         self, config, workload_columns, random_seed, database_name, experiment_id=None, filter_utilized_columns=None
     ):
         assert config["benchmark"] in [
             "TPCH",
-            "TPCHC",
+            "TPCHC", "TPCHC2",
             "TPCDS",
             "JOB",
         ], f"Benchmark '{config['benchmark']}' is currently not supported."
@@ -34,6 +38,7 @@ class WorkloadGenerator(object):
         self.experiment_id = experiment_id
         self.filter_utilized_columns = filter_utilized_columns
 
+        # fix random seeds
         self.rnd = random.Random()
         self.rnd.seed(random_seed)
         self.np_rnd = np.random.default_rng(seed=random_seed)
@@ -47,9 +52,12 @@ class WorkloadGenerator(object):
         self.varying_frequencies = config["varying_frequencies"]
 
         # self.query_texts is list of lists. Outer list for query classes, inner list for instances of this class.
-        self.query_texts = self._retrieve_query_texts()
+        self.query_texts = self._retrieve_query_texts(config['multirun'])
         self.query_classes = set(range(1, self.number_of_query_classes + 1))
         self.available_query_classes = self.query_classes - self.excluded_query_classes
+        self.wk_list = self._workloads_from_tuples(
+            [(tuple(self.query_classes), tuple(range(len(self.query_classes))))]
+            )
 
         self.globally_indexable_columns = self._select_indexable_columns(self.filter_utilized_columns)
 
@@ -158,16 +166,26 @@ class WorkloadGenerator(object):
             return 99
         elif self.benchmark == "JOB":
             return 113
-        elif self.benchmark == "TPCHC":
+        elif self.benchmark in ["TPCHC", "TPCHC2"]:
             return 20
         else:
             raise ValueError("Unsupported Benchmark type provided, only TPCH, TPCDS, and JOB supported.")
 
-    def _retrieve_query_texts(self):
-        query_files = [
-            open(f"{QUERY_PATH}/{self.benchmark}/{self.benchmark}_{file_number}.txt", "r")
-            for file_number in range(1, self.number_of_query_classes + 1)
-        ]
+    def _retrieve_query_texts(self, multirun=-1):
+        """get the list of workload query texts
+        multirun: -1 (ori) if there are only 1 workload, otherwise, there will be multiple workload
+        to choose from to be retrieve (e.g., choose from 3 workloads in ise)
+        """
+        if multirun == -1:
+            query_files = [
+                open(f"{QUERY_PATH}/{self.benchmark}/{self.benchmark}_{file_number}.txt", "r")
+                for file_number in range(1, self.number_of_query_classes + 1)
+            ]
+        else:
+            query_files = [
+                open(f"{QUERY_PATH}/{self.benchmark}/{multirun}/{self.benchmark}_{file_number}.txt", "r")
+                for file_number in range(1, self.number_of_query_classes + 1)
+            ]
 
         finished_queries = []
         for query_file in query_files:
@@ -215,7 +233,8 @@ class WorkloadGenerator(object):
                 if column.name in query_text_after_where and f"{column.table.name} " in query_text_before_where:
                     query.columns.append(column)
 
-    def _workloads_from_tuples(self, tuples, unknown_query_probability=None):
+    def _workloads_from_tuples(self, tuples: List[Tuple[Tuple[int], Tuple[int]]], unknown_query_probability=None):
+        """construct and return a workload instance"""
         workloads = []
         unknown_query_probability = "" if unknown_query_probability is None else unknown_query_probability
 
@@ -244,8 +263,9 @@ class WorkloadGenerator(object):
         return workloads
 
     def _generate_workloads(
-        self, train_instances, validation_instances, test_instances, size, unknown_query_probability=None
+        self, train_instances: int, validation_instances: int, test_instances: int, size: int, unknown_query_probability=None
     ):
+        """generate workload instances by repeative random samplings of {size} queries"""
         required_unique_workloads = train_instances + validation_instances + test_instances
 
         unique_workload_tuples = set()
@@ -328,6 +348,12 @@ class WorkloadGenerator(object):
         return workloads
 
     def _generate_random_workload(self, size, unknown_query_probability=None):
+        """
+        randomly sample {size} query classes from the available query classes {self.number_of_query_classes}
+        , and return along with its qc_freq.
+        if unknown_query_probability is not None, then ensure {size*unknown_query_probability} queries is sampled
+        from unknown query classes.
+        """
         assert size <= self.number_of_query_classes, "Cannot generate workload with more queries than query classes"
 
         workload_query_classes = None
