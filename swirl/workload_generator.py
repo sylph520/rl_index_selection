@@ -233,7 +233,7 @@ class WorkloadGenerator(object):
                 if column.name in query_text_after_where and f"{column.table.name} " in query_text_before_where:
                     query.columns.append(column)
 
-    def _workloads_from_tuples(self, tuples: List[Tuple[Tuple[int], Tuple[int]]], unknown_query_probability=None):
+    def _workloads_from_tuples(self, tuples: List[Tuple[Tuple[int], Tuple[int]]], unknown_query_probability=None) -> List[Workload]:
         """construct and return a workload instance"""
         workloads = []
         unknown_query_probability = "" if unknown_query_probability is None else unknown_query_probability

@@ -156,8 +156,8 @@ class Experiment(object):
 
         self.test_fm = self.test_model(self.model)[0]
         self.vali_fm = self.validate_model(self.model)[0]
-        self.test_fm2 = self.test_model(self.model, wk_list=self.workload_generator.wk_list)[0]
-        self.vali_fm2 = self.validate_model(self.model, wk_list=self.workload_generator.wk_list)[0]
+        self.test_fm2 = self.test_model(self.model, wk_list=[self.workload_generator.wk_list])[0]
+        self.vali_fm2 = self.validate_model(self.model, wk_list=[self.workload_generator.wk_list])[0]
 
         # load the model for testing and validation
         self.moving_average_model = self.model_type.load(f"{self.experiment_folder_path}/moving_average_model.zip")
@@ -165,8 +165,8 @@ class Experiment(object):
         self.test_ma = self.test_model(self.moving_average_model)[0]
         self.vali_ma = self.validate_model(self.moving_average_model)[0]
 
-        self.test_ma2 = self.test_model(self.moving_average_model, wk_list=self.workload_generator.wk_list)[0]
-        self.vali_ma2 = self.validate_model(self.moving_average_model, wk_list=self.workload_generator.wk_list)[0]
+        self.test_ma2 = self.test_model(self.moving_average_model, wk_list=[self.workload_generator.wk_list])[0]
+        self.vali_ma2 = self.validate_model(self.moving_average_model, wk_list=[self.workload_generator.wk_list])[0]
         if len(self.multi_validation_wl) > 0:
             self.moving_average_model_mv = self.model_type.load(
                 f"{self.experiment_folder_path}/moving_average_model_mv.zip"
@@ -175,16 +175,16 @@ class Experiment(object):
             self.test_ma_mv = self.test_model(self.moving_average_model_mv)[0]
             self.vali_ma_mv = self.validate_model(self.moving_average_model_mv)[0]
 
-            self.test_ma_mv2 = self.test_model(self.moving_average_model_mv, wk_list=self.workload_generator.wk_list)[0]
-            self.vali_ma_mv2 = self.validate_model(self.moving_average_model_mv, wk_list=self.workload_generator.wk_list)[0]
+            self.test_ma_mv2 = self.test_model(self.moving_average_model_mv, wk_list=[self.workload_generator.wk_list])[0]
+            self.vali_ma_mv2 = self.validate_model(self.moving_average_model_mv, wk_list=[self.workload_generator.wk_list])[0]
 
         self.moving_average_model_3 = self.model_type.load(f"{self.experiment_folder_path}/moving_average_model_3.zip")
         self.moving_average_model_3.training = False
         self.test_ma_3 = self.test_model(self.moving_average_model_3)[0]
         self.vali_ma_3 = self.validate_model(self.moving_average_model_3)[0]
 
-        self.test_ma_32 = self.test_model(self.moving_average_model_3, wk_list=self.workload_generator.wk_list)[0]
-        self.vali_ma_32 = self.validate_model(self.moving_average_model_3, wk_list=self.workload_generator.wk_list)[0]
+        self.test_ma_32 = self.test_model(self.moving_average_model_3, wk_list=[self.workload_generator.wk_list])[0]
+        self.vali_ma_32 = self.validate_model(self.moving_average_model_3, wk_list=[self.workload_generator.wk_list])[0]
         if len(self.multi_validation_wl) > 0:
             self.moving_average_model_3_mv = self.model_type.load(
                 f"{self.experiment_folder_path}/moving_average_model_3_mv.zip"
@@ -192,15 +192,15 @@ class Experiment(object):
             self.moving_average_model_3_mv.training = False
             self.test_ma_3_mv = self.test_model(self.moving_average_model_3_mv)[0]
             self.vali_ma_3_mv = self.validate_model(self.moving_average_model_3_mv)[0]
-            self.test_ma_3_mv2 = self.test_model(self.moving_average_model_3_mv, wk_list=self.workload_generator.wk_list)[0]
-            self.vali_ma_3_mv2 = self.validate_model(self.moving_average_model_3_mv, wk_list=self.workload_generator.wk_list)[0]
+            self.test_ma_3_mv2 = self.test_model(self.moving_average_model_3_mv, wk_list=[self.workload_generator.wk_list])[0]
+            self.vali_ma_3_mv2 = self.validate_model(self.moving_average_model_3_mv, wk_list=[self.workload_generator.wk_list])[0]
 
         self.best_mean_reward_model = self.model_type.load(f"{self.experiment_folder_path}/best_mean_reward_model.zip")
         self.best_mean_reward_model.training = False
         self.test_bm = self.test_model(self.best_mean_reward_model)[0]
         self.vali_bm = self.validate_model(self.best_mean_reward_model)[0]
-        self.test_bm2 = self.test_model(self.best_mean_reward_model, wk_list=self.workload_generator.wk_list)[0]
-        self.vali_bm2 = self.validate_model(self.best_mean_reward_model, wk_list=self.workload_generator.wk_list)[0]
+        self.test_bm2 = self.test_model(self.best_mean_reward_model, wk_list=[self.workload_generator.wk_list])[0]
+        self.vali_bm2 = self.validate_model(self.best_mean_reward_model, wk_list=[self.workload_generator.wk_list])[0]
         if len(self.multi_validation_wl) > 0:
             self.best_mean_reward_model_mv = self.model_type.load(
                 f"{self.experiment_folder_path}/best_mean_reward_model_mv.zip"
@@ -208,8 +208,8 @@ class Experiment(object):
             self.best_mean_reward_model_mv.training = False
             self.test_bm_mv = self.test_model(self.best_mean_reward_model_mv)[0]
             self.vali_bm_mv = self.validate_model(self.best_mean_reward_model_mv)[0]
-            self.test_bm_mv2 = self.test_model(self.best_mean_reward_model_mv, wk_list=self.workload_generator.wk_list)[0]
-            self.vali_bm_mv2 = self.validate_model(self.best_mean_reward_model_mv, wk_list=self.workload_generator.wk_list)[0]
+            self.test_bm_mv2 = self.test_model(self.best_mean_reward_model_mv, wk_list=[self.workload_generator.wk_list])[0]
+            self.vali_bm_mv2 = self.validate_model(self.best_mean_reward_model_mv, wk_list=[self.workload_generator.wk_list])[0]
 
         self._write_report()
 
@@ -333,7 +333,7 @@ class Experiment(object):
                 vali_fm_perfs, self.performance_vali_final_model, self.vali_fm_details = self.vali_fm[idx]
 
                 test_fm_perfs2, self.performance_test_final_model2, self.test_fm_details2 = self.test_fm2[idx]
-                vali_fm_perfs2, self.performance_vali_final_model2, self.vali_fm_details2 = self.vali_fm3[idx]
+                vali_fm_perfs2, self.performance_vali_final_model2, self.vali_fm_details2 = self.vali_fm2[idx]
 
                 _, self.performance_test_moving_average_model, self.test_ma_details = self.test_ma[idx]
                 _, self.performance_vali_moving_average_model, self.vali_ma_details = self.vali_ma[idx]

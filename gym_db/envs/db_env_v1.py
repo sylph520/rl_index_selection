@@ -2,6 +2,7 @@ import collections
 import copy
 import logging
 import random
+from typing import List
 
 import gym
 
@@ -10,6 +11,7 @@ from index_selection_evaluation.selection.cost_evaluation import CostEvaluation
 from index_selection_evaluation.selection.dbms.postgres_dbms import PostgresDatabaseConnector
 from index_selection_evaluation.selection.index import Index
 from index_selection_evaluation.selection.utils import b_to_mb
+from index_selection_evaluation.selection.workload import Workload
 
 
 class DBEnvV1(gym.Env):
@@ -31,7 +33,7 @@ class DBEnvV1(gym.Env):
 
         self.globally_indexable_columns = config["globally_indexable_columns"]
         # In certain cases, workloads are consumed: therefore, we need copy
-        self.workloads = copy.copy(config["workloads"])
+        self.workloads: List[Workload] = copy.copy(config["workloads"])
         self.current_workload_idx = 0
         self.similar_workloads = config["similar_workloads"]
         self.max_steps_per_episode = config["max_steps_per_episode"]
