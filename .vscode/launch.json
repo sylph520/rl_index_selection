@@ -10,7 +10,7 @@
 			"type": "python",
 			"request": "launch",
 			"module": "swirl",
-			"justMyCode": false,
+			// "justMyCode": false,
 			"args": ["experiments/tpch_r30.json"] 
 		},
 		{
@@ -27,8 +27,24 @@
 			"request": "launch",
 			"module": "swirl",
 			"justMyCode": false,
-			"args": ["experiments/tpch2.json"] 
-		},		
+			"args": ["experiments/tpchc.json"] 
+		},
+		{
+			"name": "Python: tpch1 custom2",
+			"type": "python",
+			"request": "launch",
+			"module": "swirl",
+			"justMyCode": false,
+			"args": ["experiments/tpchc2.json"] 
+		},
+        {
+			"name": "Python: tpch1 custom sb 1000",
+			"type": "python",
+			"request": "launch",
+			"module": "swirl",
+			"justMyCode": false,
+			"args": ["experiments/tpch1_cw_nc_sb1000.json"] 
+		},			
 		{
 			"name": "Python: tpch1 plan embdding obs",
 			"type": "python",
@@ -61,6 +77,16 @@
 			"justMyCode": false,
 			"args": ["experiments/tpcds.json"] 
 		},
+        {
+			"name": "sqlgen",
+			"type": "python",
+			"request": "launch",
+			"program": "${file}",
+			"console": "integratedTerminal",
+			"justMyCode": false,
+            "args": ["--wk_path", "postgres_count_3x20x61_3preds_wtt_0-th.txt_plain"]
+
+        },
 		{
 			"name": "Python: Current File",
 			"type": "python",
@@ -68,7 +94,6 @@
 			"program": "${file}",
 			"console": "integratedTerminal",
 			"justMyCode": false
-		},
-
+		}
 	]
 }

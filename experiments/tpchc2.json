@@ -40,21 +40,22 @@
     "benchmark": "TPCHC2",
     "scale_factor": 1,
     "size": 20,
-    "varying_frequencies": false, 
+    "varying_frequencies": false,
     "training_instances": 5000,
     "validation_testing": {
-      "number_of_workloads": 5,
+      "number_of_workloads": 14,
       "unknown_query_probabilities": [0.0]
     },
     "similar_workloads": false,
     "excluded_query_classes": [],
     "unknown_queries": 0,
-	"multirun": 0
+    "multirun": 0
   },
   "comparison_algorithms": ["db2advis"],
   "budgets": {
     "training": false,
-    "validation_and_testing": [50, 100, 150, 250, 350, 500, 650, 800, 1000]
+    "fixed": true,
+    "validation_and_testing": [100, 150, 300, 500, 600, 700, 800,900,1000, 1250, 1500, 1800, 2000, 3000]
   },
   "column_filters": {
     "TableNumRowsFilter": 10000
